@@ -9,4 +9,4 @@ A visually interactive task manager with animations, dark mode, and progress tra
 - Animated UI
 
 ## Live Demo
-https://IrineTheresa.github.io/cute-todo-app
+https://IrineTheresa.github.io/TO-DO
