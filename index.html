@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ Cute Smart To-Do ✨</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(-45deg, #ffd6e0, #d0f4ff, #f3e8ff, #ffe5ec);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+}
+
+.dark {
+  background: linear-gradient(-45deg, #1e1e2f, #2c2c54, #1a1a2e);
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating blobs */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.6;
+  animation: float 10s infinite ease-in-out;
+}
+.blob1 { width: 200px; height: 200px; background: #ffb3c6; top: 10%; left: 10%; }
+.blob2 { width: 250px; height: 250px; background: #a0e7e5; bottom: 10%; right: 10%; animation-delay: 3s; }
+.blob3 { width: 150px; height: 150px; background: #cdb4db; top: 60%; left: 20%; animation-delay: 6s; }
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-30px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Sparkles */
+.sparkle {
+  position: absolute;
+  font-size: 18px;
+  animation: sparkleMove 6s infinite linear;
+}
+@keyframes sparkleMove {
+  0% { transform: translateY(100vh); }
+  100% { transform: translateY(-10vh); }
+}
+
+/* Floating cute images */
+.float-img {
+  position: absolute;
+  width: 60px;
+  animation: floatImg 6s infinite ease-in-out;
+}
+.img1 { top: 10%; left: 5%; }
+.img2 { top: 20%; right: 8%; animation-delay: 2s; }
+.img3 { bottom: 15%; left: 10%; animation-delay: 4s; }
+.img4 { bottom: 10%; right: 5%; animation-delay: 1s; }
+
+@keyframes floatImg {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Mascot */
+.mascot {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 90px;
+  animation: bounce 3s infinite;
+}
+@keyframes bounce {
+  50% { transform: translateY(-10px); }
+}
+
+/* Container */
+.container {
+  position: relative;
+  z-index: 2;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  padding: 25px;
+  width: 370px;
+  border-radius: 20px;
+}
+
+.dark .container {
+  background: rgba(40,40,60,0.9);
+  color: white;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+input {
+  width: 65%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+}
+
+button {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #6ec6ff;
+  color: white;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #f9fbff;
+}
+
+.completed {
+  text-decoration: line-through;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #ddd;
+  margin-top: 10px;
+}
+.progress {
+  height: 100%;
+  background: #6ec6ff;
+  width: 0%;
+}
+
+.empty {
+  text-align: center;
+  margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Background -->
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<div class="sparkle" style="left:10%">✨</div>
+<div class="sparkle" style="left:30%">💫</div>
+
+<img src="https://cdn-icons-png.flaticon.com/512/414/414927.png" class="float-img img1">
+<img src="https://cdn-icons-png.flaticon.com/512/833/833472.png" class="float-img img2">
+<img src="https://cdn-icons-png.flaticon.com/512/616/616494.png" class="float-img img3">
+<img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="float-img img4">
+
+<img src="https://cdn-icons-png.flaticon.com/512/742/742751.png" class="mascot">
+
+<!-- App -->
+<div class="container">
+
+<div class="top-bar">
+  <h3>✨ To-Do</h3>
+  <button onclick="toggleTheme()">🌙</button>
+</div>
+
+<input id="taskInput" placeholder="Add task 💖">
+<button onclick="addTask()">➕</button>
+
+<div class="progress-bar"><div class="progress" id="progress"></div></div>
+
+<ul id="taskList"></ul>
+<div class="empty" id="emptyMsg">No tasks yet 🌸</div>
+
+</div>
+
+<script>
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function save() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function render() {
+  let list = document.getElementById("taskList");
+  list.innerHTML = "";
+  let done = 0;
+
+  tasks.forEach((t,i)=>{
+    let li = document.createElement("li");
+    let span = document.createElement("span");
+    span.textContent = t.text;
+
+    if(t.done){ span.classList.add("completed"); done++; }
+
+    span.onclick=()=>{t.done=!t.done; save(); render();}
+    span.ondblclick=()=>{ let n=prompt("Edit",t.text); if(n){t.text=n; save(); render();}}
+
+    let del=document.createElement("button");
+    del.textContent="❌";
+    del.onclick=()=>{tasks.splice(i,1); save(); render();}
+
+    li.append(span,del);
+    list.append(li);
+  });
+
+  document.getElementById("emptyMsg").style.display = tasks.length? "none":"block";
+  document.getElementById("progress").style.width = (done/tasks.length*100||0)+"%";
+}
+
+function addTask(){
+  let val=document.getElementById("taskInput").value.trim();
+  if(!val)return;
+  tasks.push({text:val,done:false});
+  document.getElementById("taskInput").value="";
+  save(); render();
+}
+
+function toggleTheme(){
+  document.body.classList.toggle("dark");
+}
+
+render();
+</script>
+
+</body>
+</html>
